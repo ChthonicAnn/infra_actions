@@ -1,4 +1,5 @@
 from http import HTTPStatus
+
 from django.test import Client, TestCase
 
 
@@ -7,7 +8,7 @@ class StaticPagesURLTests(TestCase):
         self.guest_client = Client()
 
     def test_about_url_exists_at_desired_location(self):
-        """РџСЂРѕРІРµСЂРєР° РґРѕСЃС‚СѓРїРЅРѕСЃС‚Рё СЃС‚СЂР°РЅРёС†."""
+        """Проверка доступности страниц."""
         response = self.guest_client.get('/')
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
@@ -15,9 +16,9 @@ class StaticPagesURLTests(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_page_shows_correct_content(self):
-        """РџСЂРѕРІРµСЂРєР° РєРѕРЅС‚РµРЅС‚Р° СЃС‚СЂР°РЅРёС†."""
+        """Проверка контента страниц."""
         response = self.guest_client.get('/')
-        self.assertContains(response, 'РЈ РјРµРЅСЏ РїРѕР»СѓС‡РёР»РѕСЃСЊ!')
+        self.assertContains(response, 'У меня получилось!')
 
         response = self.guest_client.get('/second_page/')
-        self.assertContains(response, 'Рђ СЌС‚Рѕ РІС‚РѕСЂР°СЏ СЃС‚СЂР°РЅРёС†Р°!')
+        self.assertContains(response, 'А это вторая страница!')
