@@ -18,21 +18,14 @@ jobs:
 
     - name: Install dependencies
       run: | 
-        # РѕР±РЅРѕРІР»РµРЅРёРµ pip
         python -m pip install --upgrade pip 
-        # СѓСЃС‚Р°РЅРѕРІРєР° flake8 Рё РµРіРѕ РїР»Р°РіРёРЅРѕРІ
         pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
-        # СѓСЃС‚Р°РЅРѕРІРєР° Р·Р°РІРёСЃРёРјРѕСЃС‚РµР№
         pip install -r requirements.txt 
 
     - name: Test with flake8 and django tests
       run: |
-        # Р·Р°РїСѓСЃРє РїСЂРѕРІРµСЂРєРё РїСЂРѕРµРєС‚Р° РїРѕ flake8
         python -m flake8
-        # РїРµСЂРµР№С‚Рё РІ РїР°РїРєСѓ, СЃРѕРґРµСЂР¶Р°С‰СѓСЋ manage.py вЂ” 
-        #<РєРѕСЂРЅРµРІР°СЏ_РїР°РїРєР°_infra_actions>/<РїР°РїРєР°_РїСЂРѕРµРєС‚Р°>/manage.py
         cd infra_project/
-        # Р·Р°РїСѓСЃС‚РёС‚СЊ РЅР°РїРёСЃР°РЅРЅС‹Рµ СЂР°Р·СЂР°Р±РѕС‚С‡РёРєРѕРј С‚РµСЃС‚С‹
         python manage.py test
 
   build_and_push_to_docker_hub:
@@ -41,19 +34,15 @@ jobs:
     needs: tests
     steps:
       - name: Check out the repo
-        # Проверка доступности репозитория Docker Hub для workflow
         uses: actions/checkout@v2 
       - name: Set up Docker Buildx
-        # Вызов сборщика контейнеров docker
         uses: docker/setup-buildx-action@v1 
       - name: Login to Docker 
-        # Запуск скрипта авторизации на Docker Hub
         uses: docker/login-action@v1 
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Push to Docker Hub
-        # Пуш образа в Docker Hub 
         uses: docker/build-push-action@v2 
         with:
           push: true
@@ -69,10 +58,8 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.PASSPHRASE }} # Если ваш ssh-ключ защищён фразой-паролем
+        passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          # Выполняет pull образа с DockerHub
           sudo docker pull pearocado/infra_actions
-          #остановка всех контейнеров
           sudo docker stop $(sudo docker ps -a -q)
           sudo docker run --rm -d -p 5000:5000 pearocado/infra_actions
